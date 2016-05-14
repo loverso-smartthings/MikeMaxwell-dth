@@ -12,6 +12,7 @@
 
 */
 
+
 metadata {
 	definition (name: "uDTH", namespace: "MikeMaxwell", author: "mike maxwell") {
 		//inputs
@@ -31,6 +32,7 @@ metadata {
         command "localOff"
         command "localOn"
 	}
+    
     preferences {
     	def s1
         def s2
@@ -52,19 +54,19 @@ metadata {
         	name			: "inDoorOn"
             ,title			: "Door Control (open, close)"
            	,type			: "bool"
-            ,defaultValue	: true
+            ,defaultValue	: false
         )
         input(
         	name			: "inGDoorOn"
             ,title			: "Garge Door Control (open, close)"
            	,type			: "bool"
-            ,defaultValue	: true
+            ,defaultValue	: false
         )
         input(
         	name			: "inLockOn"
             ,title			: "Lock (lock, unlock)"
            	,type			: "bool"
-            ,defaultValue	: true
+            ,defaultValue	: false
         )
         input( 
            	title			: "Device outputs\nSend the events listed below."
@@ -74,7 +76,7 @@ metadata {
             ,defaultValue	: "st.illuminance.illuminance.dark"
         )
         
-        d = "contact"
+        d = "Contact"
         s1 = "open"
         s2 = "closed"
         input( 
