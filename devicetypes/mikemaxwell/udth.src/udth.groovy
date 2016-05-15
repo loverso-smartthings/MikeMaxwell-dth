@@ -2,7 +2,8 @@
 	Universal virtual DTH
   	Copyright 2016 Mike Maxwell
     
-    2016-05-15	ignore duplicate input requests
+    1.0.1	2016-05-15	ignore duplicate input requests
+    					added version info
 
 	This software if free for Private Use. You may use and modify the software without distributing it.
  
@@ -33,12 +34,20 @@ metadata {
         
         command "localOff"
         command "localOn"
+        
+        attribute "version", "string"
 	}
     
     preferences {
     	def s1
         def s2
         def d
+        //paragraph input
+        input(
+        	title			: "uDTH version: ${getVersion()}"
+            ,description	: null
+            ,type			: "paragraph"
+        )
     	input(
         	title			: "Device inputs\nRespond to these events/commands." 
             ,description	: null
@@ -259,8 +268,13 @@ def localOff() {
     }
 }
 
+def getVersion(){
+	return "1.0.1"
+}
+
 //capture preference changes
 def updated() {
+	sendEvent( name: "version", value: getVersion(), displayed: false)
     //log.debug "syncDevices"
     syncDevices(null)
 }
