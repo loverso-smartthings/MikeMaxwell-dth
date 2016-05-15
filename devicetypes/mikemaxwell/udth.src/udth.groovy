@@ -1,6 +1,8 @@
 /* 
 	Universal virtual DTH
   	Copyright 2016 Mike Maxwell
+    
+    2016-05-15	ignore duplicate input requests
 
 	This software if free for Private Use. You may use and modify the software without distributing it.
  
@@ -238,13 +240,23 @@ def syncDevices(cmd){
 }
 
 def localOn() {
-	sendEvent(name: "uDTH", value: "on" ,displayed: false)
-    syncDevices("1")
+	if (device.currentValue("uDTH") != "on"){
+    	log.info "on request: OK"
+		sendEvent(name: "uDTH", value: "on" ,displayed: false)
+    	syncDevices("1")
+    } else {
+    	log.info "on request: duplicate, ignored"
+    }
 }
 
 def localOff() {
-	sendEvent(name: "uDTH", value: "off" ,displayed: false)
-    syncDevices("0")
+	if (device.currentValue("uDTH") != "off"){
+    	log.info "off request: OK"
+		sendEvent(name: "uDTH", value: "off" ,displayed: false)
+    	syncDevices("0")
+    } else {
+    	log.info "off request: duplicate, ignored"
+    }
 }
 
 //capture preference changes
