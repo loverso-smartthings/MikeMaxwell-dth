@@ -2,7 +2,8 @@
 	Universal virtual DTH
   	Copyright 2016 Mike Maxwell
     
-    1.0.1	2016-05-15	ignore duplicate input requests
+    1.0.3	2016-05-18	added optional auto off
+    1.0.2	2016-05-15	ignore duplicate input requests
     					added version info
 
 	This software if free for Private Use. You may use and modify the software without distributing it.
@@ -78,6 +79,13 @@ metadata {
             ,title			: "Lock (lock, unlock)"
            	,type			: "bool"
             ,defaultValue	: false
+        )
+        input(
+        	name			: "autoOff"
+            ,title			: "Delayed device turn off (optional)"
+            ,type			: "enum"
+            ,required		: false
+            ,options		: [["5":"5 seconds"],["30":"30 seconds"],["60":"1 Minute"],["300":"5 Minutes"]]
         )
         input( 
            	title			: "Device outputs\nSend the events listed below."
@@ -253,6 +261,7 @@ def localOn() {
     	log.info "on request: OK"
 		sendEvent(name: "uDTH", value: "on" ,displayed: false)
     	syncDevices("1")
+        if (autoOff) runIn(autoOff.toInteger(),localOff)
     } else {
     	log.info "on request: duplicate, ignored"
     }
@@ -269,7 +278,7 @@ def localOff() {
 }
 
 def getVersion(){
-	return "1.0.1"
+	return "1.0.3"
 }
 
 //capture preference changes
