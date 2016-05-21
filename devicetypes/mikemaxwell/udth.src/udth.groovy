@@ -2,6 +2,7 @@
 	Universal virtual DTH
   	Copyright 2016 Mike Maxwell
     
+    1.0.4	2016-05-21	added LUX capability
     1.0.3	2016-05-18	added optional auto off
     1.0.2	2016-05-15	ignore duplicate input requests
     					added version info
@@ -28,6 +29,7 @@ metadata {
         capability "Motion Sensor"			//"active", "inactive"
         capability "Presence Sensor"		//"present", "not present"
         capability "Acceleration Sensor"	//"active", "inactive"
+        capability "Illuminance Measurement"
         
         //both
         capability "Door Control"			//listen for "open", "close" respond with "open" "closed"
@@ -148,6 +150,16 @@ metadata {
           	,options		: buildOptions(d,s1,s2)
             ,description	: accelOn ?: "Not Used, Tap to enable..."  
         )
+        d = "Illuminance"
+        s1 = "0 Lux"
+        s2 = "50 Lux"
+		input( 
+        	name			: "luxOn"
+            ,title			: buildTitle(d,s1,s2)
+            ,type			: "enum"
+          	,options		: buildOptions(d,s1,s2)
+            ,description	: accelOn ?: "Not Used, Tap to enable..."  
+        )        
     }
   
   	simulator {
@@ -182,14 +194,17 @@ metadata {
             state "open", label:'${name}', backgroundColor: "#e6971b", icon:"st.doors.garage.garage-open" 
         }
         standardTile("accel", "device.acceleration", inactiveLabel: false, height:2, width:2, canChangeIcon: false) {
-            state "default", label: "accelleration\nnot used"
+            state "default", label: "acceleration\nnot used"
             state "inactive", label:'${name}', backgroundColor: "#ffffff", icon:"st.motion.acceleration.inactive" 
             state "active", label:'${name}', backgroundColor: "#53a7c0", icon:"st.motion.acceleration.active" 
         }
-
-
+        standardTile("lux", "device.lux", inactiveLabel: false, height:2, width:2, canChangeIcon: false) {
+            state "default", label: "illuminance\nnot used"
+            state "dark", label:'${name}', backgroundColor: "#ffffff", icon:"st.illuminance.illuminance.dark" 
+            state "bright", label:'${name}', backgroundColor: "#53a7c0", icon:"st.illuminance.illuminance.bright" 
+        }
         main(["switch"])
-        details(["switch","contact","motion","present","door","accel"])
+        details(["switch","contact","motion","present","door","accel","lux"])
  	}
 }
 
@@ -253,7 +268,18 @@ def syncDevices(cmd){
 		if (accelOn == cmd) sendEvent(name: "acceleration", value: "active")
         else sendEvent(name: "acceleration", value: "inactive")				
     } else sendEvent(name: "acceleration", value: null, displayed	: false)
-    
+    if (luxOn != null){
+    	if (luxOn == cmd){
+        	sendEvent(name: "illuminance", value: 50)
+        	sendEvent(name: "lux", value: "bright", displayed	: false)
+        } else {
+        	sendEvent(name: "illuminance", value: 0)
+            sendEvent(name: "lux", value: "dark", displayed	: false)
+        }
+    } else {
+    	sendEvent(name: "illuminance", value: null, displayed	: false)
+        sendEvent(name: "lux", value: null, displayed	: false)
+    }
 }
 
 def localOn() {
@@ -278,7 +304,7 @@ def localOff() {
 }
 
 def getVersion(){
-	return "1.0.3"
+	return "1.0.4"
 }
 
 //capture preference changes
